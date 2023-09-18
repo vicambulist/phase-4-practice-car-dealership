@@ -1,6 +1,6 @@
-# Flask Practice - Bank Accounts
+# Flask Practice - Car Dealership
 
-This application is being built to track banks, customers, and the accounts between them.
+This application is being built to track cars sold by car dealerships.
 
 ## Getting Started
 
@@ -10,35 +10,35 @@ There are no tests so be sure to use the `flask shell` and Postman to be certain
 
 ## Models
 
-You have three models: 
+You have three models:
 
-### Bank
-
-- `name` (string): Cannot be null, must be unique
-
-### Customer
+### Owner
 
 - `first_name` (string): Cannot be null
-
 - `last_name` (string): Cannot be null
 
-### Account
+### Dealership
 
-- `balance` (integer): Cannot be null, cannot be less than 0
+- `name` (string): Cannot be null
+- `address` (string): Cannot be null
 
-- `account_type` (string): Cannot be null
+### Car
+
+- `make` (string): Cannot be null
+- `model` (string): Cannot be null
+- `date_sold` (datetime): Cannot be null
 
 ## Relationships
 
-This is a many-to-many relationship. 
+This is a many-to-many relationship.
 
-- A bank has many accounts and an account belongs to a bank.
+- An owner has many cars and a car belongs to an owner.
 
-- A customer has many accounts and an account belongs to a customer.
+- A dealership has many cars and a car belongs to a dealership.
 
-- A bank has many customers and a customer has many banks through accounts.
+- A dealership has many owners and an owner has many dealerships through cars.
 
-`Bank --< Account >-- Customer`
+`Owner --< Car >-- Dealership`
 
 The foreign keys aren't specified so you'll have to determine where they go.
 
@@ -51,110 +51,117 @@ You can either use the `seed.py` to create your seeds or you can seed manually w
 Build out these routes:
 
 
-### Customer
+### Owner
 
-#### `GET /customers`
+#### `GET /owners`
 
-Returns a list of all customers formatted like so:
+Returns a list of all owners formatted like so:
 
 ```json
 [
     {
         "id": 1,
-        "first_name": "Chett",
-        "last_name": "Tiller"
+        "first_name": "Mohammad",
+        "last_name": "Hossain"
     },
     {
         "id": 2,
-        "first_name": "Charlie",
-        "last_name": "Kozey"
+        "first_name": "Alina",
+        "last_name": "Pisarenko"
     }
 ]
 ```
 
-#### `GET /customers/:id`
+#### `GET /owners/:id`
 
-Returns a customer with the matching id. If there is no customer, returns a message that the customer could not be found along with a 404.
+Returns an owner with the matching id. If there is no owner, returns a message that the owner could not be found along with a 404.
 
-Format your customer object like so:
+Format your owner object like so:
 
 ```json
     {
         "id": 1,
-        "first_name": "Chett",
-        "last_name": "Tiller",
-        "accounts": [
+        "first_name": "Mohammad",
+        "last_name": "Hossain",
+        "cars": [
             {
                 "id": 1,
-                "balance": 100,
-                "account_type": "checking",
-                "customer_name": "Chett Tiller",
-                "bank_name": "Crown Royale"
+                "make": "Ford",
+                "model": "Taurus",
+                "date_sold": "2002-08-18 00:00:00"
             },
             {
                 "id": 2,
-                "balance": 30,
-                "account_type": "savings",
-                "customer_name": "Chett Tiller",
-                "bank_name": "Royal Raccoon Bank"
+                "make": "Chevrolet",
+                "model": "Corvette",
+                "date_sold": "2001-12-31 00:00:00"
             }
         ]
     }
 ```
 
-*Hint: You'll need to find a way to include the customer accounts in this route. This may involve a method similar `to_dict()`*
+#### `DELETE /owners/:id`
 
-#### `DELETE /customer/:id`
-
-Deletes the customer and all associated accounts from the database. Returns 204 if the customer was successfully deleted or 404 and an appropriate message if that customer could not be found.
+Deletes the owner and all associated cars from the database. Returns 204 if the owner was successfully deleted or 404 and an appropriate message if that owner could not be found.
 
 
-### Bank
+### Dealership
 
-#### `GET /banks`
+#### `GET /dealerships`
 
-Returns a list of all banks.
+Returns a list of all dealerships.
 
 ```json
 [
     {
         "id": 1,
-        "name": "Royal Raccoon Bank"
+        "name": "Crazy Bob's Car Rodeo",
+        "address": "123 Woodland Dr"
     },
     {
         "id": 2,
-        "name": "Bob's Bank",
+        "name": "King Auto's Castle",
+        "address": "456 Roundtable Ln"
     }
 ]
 ```
 
 
-#### `GET /banks/:id`
+#### `GET /dealerships/:id`
 
-Returns a bank with the matching id. If there is no bank, returns a message that the bank could not be found along with a 404.
+Returns a dealership with the matching id. If there is no dealership, returns a message that the dealership could not be found along with a 404.
 
 ```json
 {
     "id": 2,
-    "name": "Bob's Bank",
+    "name": "King Auto's Castle",
+    "address": "456 Roundtable Ln"
 }
 ```
 
 
-### Account
+### Car
 
-#### `POST /account`
+#### `POST /cars`
 
-Creates a new account. The account must belong to a customer and a bank. Return the new account details like so:
+Creates a new car. The car must belong to a owner and a dealership. Return the new car details like so:
 
 ```json
 {
     "id": 3,
-    "balance": 10000,
-    "account_type": "checking",
-    "customer_name": "Charlie Kozey",
-    "bank_name": "Royal Raccoon Bank"
+    "make": "Ford",
+    "model": "Pinto",
+    "owner": {
+      "id": 2,
+      "first_name": "Alina",
+      "last_name": "Pisarenko"
+    },
+    "dealership": {
+        "id": 1,
+        "name": "Crazy Bob's Car Rodeo",
+        "address": "123 Woodland Dr"
+    }
 }
 ```
 
-*HINT: You might need to create more than one method with the functionality of `to_dict` in order to make this work.*
+*Please note the json that gets serialized may be a different order for any given response, don't focus on the order so much as making sure everything gets returned correctly...*
