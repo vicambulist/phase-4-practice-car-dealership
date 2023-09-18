@@ -164,4 +164,8 @@ Creates a new car. The car must belong to a owner and a dealership. Return the n
 }
 ```
 
+#### `DELETE /cars/:id`
+
+Deletes the car from the database. Returns 204 if the car was successfully deleted or 404 and an appropriate message if that car could not be found.
+
 *Please note the json that gets serialized may be a different order for any given response, don't focus on the order so much as making sure everything gets returned correctly...*
