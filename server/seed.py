@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from app import app
-from models import db # models go here
+from models import db, Dealership, Owner, Car
 from faker import Faker
 
 faker = Faker()
